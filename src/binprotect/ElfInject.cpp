@@ -1,15 +1,8 @@
-/*
- * ElfInject.cpp
- *
- *  Created on: Dec 17, 2014
- *      Author: sergej
- */
-
 #include "ElfInject.h"
 
 
-
-ElfInject::ElfInject(string binName)
+ElfInject::ElfInject(string binName) :
+			elfRemapped(false)
 {
 	bin.name = binName;
 	bin.basePtr = NULL;
@@ -31,10 +24,7 @@ ElfInject::ElfInject(string binName)
 
 	bin.sizeGotPlt = 0;
 	bin.sizeGot = 0;
-
-	elfRemapped = false;
 }
-
 
 
 ElfInject::~ElfInject()

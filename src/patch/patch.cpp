@@ -20,6 +20,7 @@ using namespace std;
 #define GLIBC_CANARY_DISTANCE	12
 
 static char libc[255];
+static int dyninstSegmSize = 0;
 
 /* printf related */
 int (*orig_printf)(__const char *__restrict __format, ...);
@@ -222,7 +223,11 @@ callback(struct dl_phdr_info *info, size_t size, void *data)
 
 		if (libName.find(NAME_LIBC_SO, 1) != string::npos) {
 			strncpy(libc, info->dlpi_name, strlen(info->dlpi_name));
-			break;
+//			break;
+		}
+
+		if (info->dlpi_phdr[j].p_vaddr == 0x08100000) {
+			dyninstSegmSize = info->dlpi_phdr[j].p_memsz;
 		}
 	}
 
@@ -242,12 +247,9 @@ void orig__init() {}
 void bp__init()
 {
 	void *handle;
-//	void (*test)(void);
-//	int (*print)(__const char *__restrict __format, ...);
 	char *error;
 
 	dl_iterate_phdr(callback, NULL);
-//	libc = "libc.so.6";
 
 	/* resolve the original printf */
 	handle = dlopen(libc, /*RTLD_LAZY*/RTLD_NOW);
@@ -272,11 +274,32 @@ void bp__init()
 	orig_printf("[PATCHED INIT  ] symbols resolved.\n");
 
 	int size = sysconf(_SC_PAGE_SIZE);
-//	if (mprotect((void*)0x08100000, size, PROT_READ|PROT_EXEC)) {
-//		perror("[PATCHED INIT  ] cannot remap memory.");
-//	}
+
+	/* BinProtect allocates PAGESIZE bytes for the shadow stack:
+	 * we mark this region as RW. 
+	 *
+	 * TODO: we do not yet consider the size of the remaining part of
+	 * this segment, which should be remapped as RE */
+	if (mprotect((void*)0x08100000, size, PROT_READ|PROT_WRITE)) {
+		perror("[PATCHED INIT  ] cannot remap memory at 0x08100000.");
+	} else {
+//		int *remDyninstSegmSize = (int*)0x08100000;
+		if (dyninstSegmSize) { //  *remDyninstSegmSize != (int)0xDeadD00D) {
+			int numPages = (dyninstSegmSize / sysconf(_SC_PAGE_SIZE)) + 1;
+			size = (numPages-1) * sysconf(_SC_PAGE_SIZE);
+
+			/* mark the remaining size of the segment provided by Dyninst as RE */
+			if (mprotect((void*)0x08101000, size, PROT_READ|PROT_EXEC)) {
+				perror("[PATCHED INIT  ] cannot remap memory at 0x08101000.");
+			}
+		}
+	}
+
+	/* BinProtect relocated the section .got.plt to the address 0x08200000,
+	 * we mark this region as RE */
+	size = sysconf(_SC_PAGE_SIZE);
 	if (mprotect((void*)0x08200000, size, PROT_READ|PROT_EXEC)) {
-		perror("[PATCHED INIT  ] cannot remap memory.");
+		perror("[PATCHED INIT  ] cannot remap memory at 0x08200000.");
 	}
 
 	orig_printf("[PATCHED INIT  ] remapping memory.\n");

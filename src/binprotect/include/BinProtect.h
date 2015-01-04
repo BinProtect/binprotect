@@ -59,10 +59,10 @@ class BinProtect {
 public:
 
 private:
-	BPatch bp;
-	BPatch_addressSpace* bp_as;
 	string mutatee;
 	string patch;
+	BPatch bp;
+	BPatch_addressSpace* bp_as;
 	PatchMgrPtr p_mgr;
 	BPatch_object *bp_lib;
 

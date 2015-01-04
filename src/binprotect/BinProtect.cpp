@@ -1,26 +1,14 @@
-/*
- * MyClass.cpp
- *
- *  Created on: Dec 13, 2014
- *      Author: sergej
- */
-
 #include "BinProtect.h"
 
-BinProtect::BinProtect(std::string newMutatee, string newPatch)
-			: mutatee(newMutatee), patch(newPatch)
-{
-	/* initialize profiling information */
-	totalFuncs = 0;
-	omittedFuncs = 0;
-
-	/* initialze binary editing related information */
-	bp_as = NULL;
-	bp_lib = NULL;
-
-	/* initialize shadow stack */
-	shadow = NULL;
-}
+BinProtect::BinProtect(std::string newMutatee, string newPatch) : 
+			mutatee(newMutatee), 
+			patch(newPatch),
+			bp_as(NULL),
+			bp_lib(NULL),
+			totalFuncs(0), 
+			omittedFuncs(0),
+			shadow(NULL)
+{}
 
 BinProtect::~BinProtect() {}
 
@@ -120,7 +108,8 @@ BinProtect::init(
 	return res;
 }
 
-/* allocates space and initializes a shadow stack to store control flow
+/**
+ * allocates space and initializes a shadow stack to store control flow
  * affecting registers of the mutatee, such as %EBP
  *
  * TODO: future implementations may easily extend this concept by introducing
@@ -129,7 +118,7 @@ BinProtect::init(
 bool
 BinProtect::allocShadowStack()
 {
-	shadow = bp_as->malloc(sizeof(rad_t));
+	shadow = bp_as->malloc(PAGESIZE/*sizeof(rad_t)*/);
 	if(shadow == NULL) {
 		error("cannot allocate memory for shadow stack");
 		return false;
