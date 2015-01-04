@@ -22,7 +22,7 @@ by BinProtect comprise:
   with safe implementations. 
 * StackProtect: modify functions in such a way, so that they become able to
   check the integrity of their stack frames. For this, a shadow stack mechanism
-  is introduces, which is used for temporary storage of return addresses of
+  is introduced, which is used for temporary storage of return addresses of
   currently active activation records. These addresses are checked upon every
   function exit with the actual return address for integrity. 
 
