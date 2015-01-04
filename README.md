@@ -1,4 +1,4 @@
-binprotect
+BinProtect
 ==========
 
 Buffer overflow vulnerabilities present a common threat. To encounter this
@@ -9,7 +9,7 @@ retrospectively protecting binaries, which have not been sufficiently protected
 at compile-time. To achieve this, we do not need source code or any additional
 information.
 
-The security mechanisms to be retrospectively injected into binaries, covered
+The security mechanisms to be retrospectively injected into binaries covered
 by BinProtect comprise: 
 
 * NX: force the loader to mark the stack (and heap) segment to be
