@@ -1,7 +1,7 @@
 # flags
 CC=g++
 CPPFLAGS:=$(CPPFLAGS) -Wall -fPIC -std=c++11
-LDFLAGS:=$(LDFLAGS) -shared
+LDFLAGS:=$(LDFLAGS) -shared -ldl
 
 # tools
 ECHO=@echo
