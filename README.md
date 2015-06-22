@@ -34,8 +34,8 @@ described in the following:
   injected into binary objects so that the particular memory regions containing
   the GOT can be marked as read-only.  
   
-For additional information you may also consider reading our paper about
-[BinProtect][1].
+For additional information you may also consider reading our [paper][1] or
+[presentation][2] about BinProtect.
 
 Requirements
 ----
@@ -60,4 +60,4 @@ Command
 
 
 [1]: https://www.sec.in.tum.de/fatih-kilic/  "BinProtect project description and Paper"
-
+[2]: https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Veranstaltungen/ITSiKongress/14ter/Vortraege-20-05-2015/Sergej_Proskurin.pdf?__blob=publicationFile
