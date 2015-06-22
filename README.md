@@ -34,8 +34,8 @@ described in the following:
   injected into binary objects so that the particular memory regions containing
   the GOT can be marked as read-only.  
   
-  For additional information you may also consider reading our paper about
-  [BinProtect][1].
+For additional information you may also consider reading our paper about
+[BinProtect][1].
 
 Requirements
 ----
