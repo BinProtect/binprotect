@@ -34,12 +34,33 @@ described in the following:
   injected into binary objects so that the particular memory regions containing
   the GOT can be marked as read-only.  
   
-  For additional information you may also consider reading our paper about BinProtect [1].
+  For additional information you may also consider reading our paper about
+  [BinProtect][1].
+
+Requirements
+----
+
+* *NOTE:* The current implementation supports only ELF32 binaries and works on
+  x86 platforms. 
+
+* In order to successfully compile BinProtect, we assume a valid installation
+  of the binary instrumentation framework Dyninst and PatchAPI.
+
+
+Compilation
+----
+
+* <code>make</code>
+
 
 Command
 ----
 
+* To be filled...
 
 
+References
+----
 
+[1]: https://www.sec.in.tum.de/fatih-kilic/  "BinProtect project description and Paper"
 
