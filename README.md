@@ -1,29 +1,45 @@
 BinProtect
-==========
+----
 
-Buffer overflow vulnerabilities present a common threat. To encounter this
-issue, operating system support and compile-time security hardening measures
-have been introduced.  Unfortunately, these are not always part of the shipped
-object code. We present BinProtect, a binary rewriting tool, capable of
-retrospectively protecting binaries, which have not been sufficiently protected
-at compile-time. To achieve this, we do not need source code or any additional
-information.
+BinProtect presents a tool capable of transforming programs in binary form
+(ELF32) to retrospectively incorporate security mechanisms, which have not been
+integrated at compile-time. Inspired by compile-time protection mechanisms,
+BinProtect integrates four security hardening measures that are shortly
+described in the following: 
 
-The security mechanisms to be retrospectively injected into binaries covered
-by BinProtect comprise: 
+* First, BinProtect hardens calls to unsafe standard C library functions (e.g.
+  strcpy(), gets(), sprintf(), ...). For this, binaries are transformed in such
+  a way that calls to both statically or dynamically linked standard C library
+  are intercepted and replaced by hardened wrapper implementations (the wrapper
+  implementations are not part of our project).
 
-* NX: force the loader to mark the stack (and heap) segment to be
-  non-executable (assuming that all library dependencies of the binary do not
-  require an executable stack).
-* RELRO: force all relocations to be resolved before the start of the
-  application and stored within the GOT. The complete GOT table is then marked
-  as read-only to prevent e.g. return-to-libc attacks (assuming partial RELRO).
-* FORTIFY_SOURCE: intercept "unsafe" library function calls and replace these
-  with safe implementations. 
-* StackProtect: modify functions in such a way, so that they become able to
-  check the integrity of their stack frames. For this, a shadow stack mechanism
-  is introduced, which is used for temporary storage of return addresses of
-  currently active activation records. These addresses are checked upon every
-  function exit with the actual return address for integrity. 
+* Second, BinProtect transforms binary objects so that they become able to
+  detect potential buffer overflows. Therefore, prologue and epilogue
+  information of functions is extended. The extended functionality causes the
+  prologue to dynamically store functions' return addresses in a dedicated
+  memory region (the shadow stack). Whereas, the functions epilogue takes over
+  responsibility to detect potential buffer overflows by matching the return
+  address with its associated copy on the shadow stack. 
+
+* Third, BinProtect integrates a special ELF program header into binaries so
+  that the Linux kernel will mark pages associated with the stack region as
+  non-executable. 
+
+* Finally, fourth, to eliminate malicious manipulation of the Global Offset
+  Table (GOT), BinProtect enforces full RELRO (RELocation Read-Only) behavior.
+  Therefore, the lazy binding mechanism of the linker is deactivated so that
+  all relocations are performed at load-time. Then, parts of the GOT are
+  relocated within the binary itself so that they can be marked as read-only
+  after performing load-time relocations. Finally, additional functionality is
+  injected into binary objects so that the particular memory regions containing
+  the GOT can be marked as read-only.  
+  
+  For additional information you may also consider reading our paper about BinProtect [1].
+
+Command
+----
+
+
+
 
 
